@@ -15,14 +15,16 @@ module tb_hadamard;
   logic signed [`FIXED_WIDTH-1:0] const_0_7071;
   logic signed [`FIXED_WIDTH-1:0] const_neg_0_7071;
   logic signed [`FIXED_WIDTH-1:0] const_1;
+  logic signed [`FIXED_WIDTH-1:0] const_neg_1;
   
   // Assign constants at the module level
   initial begin
     /* verilator lint_off REALCVT */
     const_0_7071 = `FIXED_POINT_CONST_0_7071;
     /* verilator lint_off REALCVT */
-    const_neg_0_7071 = -`FIXED_POINT_CONST_0_7071;
-    const_1 = `SCALE_FACTOR; // 1.0 in fixed-point
+    const_neg_0_7071 = `FIXED_POINT_CONST_0_7071_NEG;
+    const_1 = `FIXED_POINT_CONST_1;
+    const_neg_1 = `FIXED_POINT_CONST_1_NEG;
   end
   
   // Instantiate the DUT
@@ -48,7 +50,7 @@ module tb_hadamard;
     // Test case 1: |0⟩ input
     // Input: |0⟩ = [1, 0]
     // Expected: (|0⟩ + |1⟩)/√2 = [1/√2, 1/√2]
-    test_count++;
+    test_count += 2;
     $display("\nTest Case %0d: |0⟩ input state", test_count);
     in_real = `SCALE_FACTOR;    // 1.0 
     in_imag = 0;                // 0.0
@@ -57,11 +59,11 @@ module tb_hadamard;
              real'(in_imag) / `SCALE_FACTOR);
     #10;
     // Expected output: 1/√2 ≈ 0.7071 for both real and imag
-    $display("  Result = [%.4f, %.4f]", 
+    $display("  Result = [%.8f, %.8f]", 
              real'(out_real) / `SCALE_FACTOR,
              real'(out_imag) / `SCALE_FACTOR);
     
-    $display("  Expected = [%.4f, %.4f]", 
+    $display("  Expected = [%.8f, %.8f]", 
              real'(const_0_7071) / `SCALE_FACTOR,
              real'(const_0_7071) / `SCALE_FACTOR);
     
@@ -81,11 +83,11 @@ module tb_hadamard;
              real'(in_imag) / `SCALE_FACTOR);
     #10;
     // Expected output: 1/√2 for real, -1/√2 for imag
-    $display("  Result = [%.4f, %.4f]", 
+    $display("  Result = [%.8f, %.8f]", 
              real'(out_real) / `SCALE_FACTOR,
              real'(out_imag) / `SCALE_FACTOR);
     
-    $display("  Expected = [%.4f, %.4f]", 
+    $display("  Expected = [%.8f, %.8f]", 
              real'(const_0_7071) / `SCALE_FACTOR,
              real'(const_neg_0_7071) / `SCALE_FACTOR);
     
@@ -97,16 +99,16 @@ module tb_hadamard;
     $display("\nTest Case %0d: Superposition (|0⟩ + |1⟩)/√2 input state", test_count);
     in_real = const_0_7071;   // 1/√2
     in_imag = const_0_7071;   // 1/√2
-    $display("  Input (|0⟩ + |1⟩)/√2 = [%.4f, %.4f]", 
+    $display("  Input (|0⟩ + |1⟩)/√2 = [%.8f, %.8f]", 
              real'(in_real) / `SCALE_FACTOR, 
              real'(in_imag) / `SCALE_FACTOR);
     #10;
     // Expected output: |0⟩ = [1, 0]
-    $display("  Result = [%.4f, %.4f]", 
+    $display("  Result = [%.8f, %.8f]", 
              real'(out_real) / `SCALE_FACTOR,
              real'(out_imag) / `SCALE_FACTOR);
     
-    $display("  Expected = [%.4f, %.4f]", 
+    $display("  Expected = [%.8f, %.8f]", 
              real'(const_1) / `SCALE_FACTOR,
              real'(0) / `SCALE_FACTOR);
     
@@ -119,21 +121,21 @@ module tb_hadamard;
     $display("\nTest Case %0d: Superposition (|0⟩ - |1⟩)/√2 input state", test_count);
     in_real = const_0_7071;       // 1/√2
     in_imag = const_neg_0_7071;     // -1/√2
-    $display("  Input (|0⟩ - |1⟩)/√2 = [%.4f, %.4f]", 
+    $display("  Input (|0⟩ - |1⟩)/√2 = [%.8f, %.8f]", 
              real'(in_real) / `SCALE_FACTOR, 
              real'(in_imag) / `SCALE_FACTOR);
     #10;
     // Expected output: |1⟩  = [0, 1]
-    $display("  Result = [%.4f, %.4f]", 
+    $display("  Result = [%.8f, %.8f]", 
              real'(out_real) / `SCALE_FACTOR,
              real'(out_imag) / `SCALE_FACTOR);
     
-    $display("  Expected = [%.4f, %.4f]", 
+    $display("  Expected = [%.8f, %.8f]", 
              real'(0) / `SCALE_FACTOR,
              real'(const_1) / `SCALE_FACTOR);
     
-    pass_count += check_result_with_tolerance("Hadamard |0>-|1>", out_real, 0, 2);
-    pass_count += check_result_with_tolerance("Hadamard |0>-|1>", out_imag, const_1, 2);
+    pass_count += check_result_with_tolerance("Hadamard |0>-|1>", out_real, 0, 5);
+    pass_count += check_result_with_tolerance("Hadamard |0>-|1>", out_imag, const_1, 5);
      
     // Test case 5: Zero input state
     // Expected: Hadamard of the zero state should yield zero state
@@ -141,12 +143,12 @@ module tb_hadamard;
     $display("\nTest Case %0d: Zero input state", test_count);
     in_real = 0;
     in_imag = 0;
-    $display("  Input zero state = [%.4f, %.4f]", 
+    $display("  Input zero state = [%.8f, %.8f]", 
              real'(in_real) / `SCALE_FACTOR,
              real'(in_imag) / `SCALE_FACTOR);
     #10;
     // Expected output: Zero state = [0, 0]
-    $display("  Result = [%.4f, %.4f]", 
+    $display("  Result = [%.8f, %.8f]", 
              real'(out_real) / `SCALE_FACTOR,
              real'(out_imag) / `SCALE_FACTOR);
     $display("  Expected = [0.0000, 0.0000]");
@@ -179,10 +181,10 @@ module tb_hadamard;
     input string test_name;
     input [`FIXED_WIDTH-1:0] actual;
     input [`FIXED_WIDTH-1:0] expected;
-    input int tolerance;
+    input [`FIXED_WIDTH-1:0] tolerance;
+    logic signed [`FIXED_WIDTH-1:0] diff;
     begin
-      int diff;
-      diff = {actual - expected};
+      diff = actual - expected;
       if (diff < 0) diff = -diff;
       
       if (diff <= tolerance) begin

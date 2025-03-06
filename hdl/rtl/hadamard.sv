@@ -8,17 +8,13 @@ module hadamard (
   output logic signed [`FIXED_WIDTH-1:0] out_imag
 );
 
-  // Define the 1/√2 constant (approximately 0.7071)
-  // This would typically be defined with appropriate fixed-point scaling
-  logic signed [`FIXED_WIDTH-1:0] INV_SQRT_2;
-  
   // Intermediate signals
   logic signed [`FIXED_WIDTH-1:0] plus_real;
   logic signed [`FIXED_WIDTH-1:0] minus_real;
   
   // Initialize the scaling constant (exact value depends on fixed-point format)
   /* verilator lint_off REALCVT */
-  assign INV_SQRT_2 = `FIXED_POINT_CONST_0_7071;
+  localparam logic signed [`FIXED_WIDTH-1:0] INV_SQRT_2_const = `FIXED_POINT_CONST_0_7071;
 
   // Calculate the (|0⟩ + |1⟩) part: in_real + in_imag
   q_add add_real (
@@ -44,13 +40,13 @@ module hadamard (
   
   q_mul scale_plus_real (
     .a(plus_real),
-    .b(INV_SQRT_2),
+    .b(INV_SQRT_2_const),
     .result(scaled_plus_real)
   );
   
   q_mul scale_minus_real (
     .a(minus_real),
-    .b(INV_SQRT_2),
+    .b(INV_SQRT_2_const),
     .result(scaled_minus_real)
   );
   
