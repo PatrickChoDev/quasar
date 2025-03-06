@@ -1,0 +1,59 @@
+# Verilog
+*.v.bin
+*.v.out
+*.v.vcd
+*.vcd
+*.fst
+*.lxt
+*.lxt2
+*.vpp
+
+# Verilator
+obj_dir/
+*.mk
+*.d
+*.o
+*.so
+*.a
+
+# Yosys
+*.json
+*.aig
+*.blif
+*.eqn
+*.dot
+*.verilog
+
+# Synthesis output
+*.bit
+*.edif
+*.log
+*.rpt
+*.net
+*.place
+*.route
+*.timing
+*.post_v
+
+# Simulation output
+*.trace
+*.sim
+*.dump
+
+# IDE/Editor specific
+.vscode/
+.idea/
+*.swp
+*~
+
+# Build directories
+build/
+out/
+
+# Dependencies
+lib/
+vendor/
+
+# Misc
+.DS_Store
+*.bak
